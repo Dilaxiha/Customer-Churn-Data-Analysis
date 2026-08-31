@@ -1,0 +1,7 @@
+{
+  "python.defaultInterpreterPath": "c:/Users/Owner/BOOTCAMP_PROJECT_2/myenv/Scripts/python.exe",
+  "python.terminal.activateEnvironment": true,
+  "python.analysis.extraPaths": [
+    "${workspaceFolder}"
+  ]
+}

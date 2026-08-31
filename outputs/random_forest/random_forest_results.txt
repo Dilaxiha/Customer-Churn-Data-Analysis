@@ -1,0 +1,27 @@
+Train: (51499, 12), Test: (12875, 12)
+
+===== RANDOM FOREST RESULTS =====
+Train Accuracy : 0.9998
+Test Accuracy  : 0.9976
+Accuracy Gap   : 0.0023
+Train F1       : 0.9998
+Test F1        : 0.9975
+Train ROC-AUC  : 1.0000
+Test ROC-AUC   : 1.0000
+Overfitting    : No significant overfitting detected
+
+Test Confusion Matrix:
+[[6770    6]
+ [  25 6074]]
+
+Classification Report (Test Set):
+              precision    recall  f1-score   support
+
+ Not Churned       1.00      1.00      1.00      6776
+     Churned       1.00      1.00      1.00      6099
+
+    accuracy                           1.00     12875
+   macro avg       1.00      1.00      1.00     12875
+weighted avg       1.00      1.00      1.00     12875
+
+All outputs successfully saved to: C:\Users\Owner\BOOTCAMP_PROJECT_2\outputs\random_forest

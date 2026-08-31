@@ -1,0 +1,59 @@
+CUSTOMER CHURN DATA EXPLORATION
+================================
+
+1. DATA INTEGRITY
+Dataset shape: 64,374 rows x 12 columns
+Null values: 0
+Duplicate rows: 0
+
+2. OUTLIER ANALYSIS ACROSS ALL VARIABLES (1st-99th Percentile)
+        Variable  1st %ile  99th %ile  Outlier Count  Outlier Pct (%)
+             Age      18.0       65.0              0             0.00
+          Tenure       1.0       60.0              0             0.00
+ Usage Frequency       1.0       30.0              0             0.00
+   Support Calls       0.0       10.0              0             0.00
+   Payment Delay       0.0       30.0              0             0.00
+     Total Spend     109.0      990.0           1260             1.96
+Last Interaction       1.0       30.0              0             0.00
+
+3. CHURN DISTRIBUTION
+       Count  Percentage
+Churn                   
+0      33881   52.631497
+1      30493   47.368503
+
+4. SUMMARY STATISTICS
+                        mean  median    min     max         std
+Age                41.970982    42.0   18.0    65.0   13.924911
+Tenure             31.994827    33.0    1.0    60.0   17.098234
+Usage Frequency    15.080234    15.0    1.0    30.0    8.816470
+Support Calls       5.400690     6.0    0.0    10.0    3.114005
+Payment Delay      17.133952    19.0    0.0    30.0    8.852211
+Total Spend       541.023379   534.0  100.0  1000.0  260.874809
+Last Interaction   15.498850    15.0    1.0    30.0    8.638436
+
+5. GENDER BREAKDOWN
+        Count  Churn Rate (%)  Share of Total Churn (%)
+Gender                                                 
+Female  34353       55.049050                 62.017512
+Male    30021       38.579661                 37.982488
+
+5. SUBSCRIPTION TYPE BREAKDOWN
+                   Count  Churn Rate (%)  Share of Total Churn (%)
+Subscription Type                                                 
+Basic              21451       48.277470                 33.961893
+Premium            21421       46.496429                 32.663234
+Standard           21502       47.330481                 33.374873
+
+5. CONTRACT LENGTH BREAKDOWN
+                 Count  Churn Rate (%)  Share of Total Churn (%)
+Contract Length                                                 
+Annual           21410       46.216721                 32.450071
+Monthly          22130       51.608676                 37.454498
+Quarterly        20834       44.048190                 30.095432
+
+6. RISK METRICS AND SEGMENTATION
+                Churn = 0   Churn = 1  Mean Difference
+Support Calls    4.500753    6.400617         1.899864
+Payment Delay   12.453086   22.334897         9.881811
+Total Spend    560.541956  519.336143       -41.205813

@@ -1,0 +1,23 @@
+CUSTOMER CHURN DATA CLEANING
+============================
+
+1. INPUT DATA
+Raw shape: 64,374 rows x 12 columns
+Duplicates removed: 0
+
+2. MISSING VALUES
+Missing values: None
+
+3. OUTLIER ANALYSIS (1st-99th Percentile)
+             Variable  Lower  Upper  Outlier Count
+                  Age   18.00  65.00              0
+               Tenure    1.00  60.00              0
+      Usage Frequency    1.00  30.00              0
+        Support Calls    0.00  10.00              0
+       Payment Delay    0.00  30.00              0
+         Total Spend  109.00 990.00           1260
+    Last Interaction    1.00  30.00              0
+
+4. CLEANED DATA
+Cleaned shape: 64,374 rows x 13 columns
+Saved to: outputs/data_cleaned.csv
