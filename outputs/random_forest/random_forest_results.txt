@@ -1,27 +1,50 @@
-Train: (51499, 12), Test: (12875, 12)
+
+=== DATA SPLIT SUMMARY ===
+X_train shape : (45061, 12)
+X_val shape   : (9656, 12)
+X_test shape  : (9657, 12)
 
 ===== RANDOM FOREST RESULTS =====
-Train Accuracy : 0.9998
-Test Accuracy  : 0.9976
-Accuracy Gap   : 0.0023
-Train F1       : 0.9998
-Test F1        : 0.9975
-Train ROC-AUC  : 1.0000
-Test ROC-AUC   : 1.0000
-Overfitting    : No significant overfitting detected
+Train Accuracy      : 0.9998
+Validation Accuracy : 0.9971
+Test Accuracy       : 0.9980
+Train vs Val Gap    : 0.0027
+Train F1            : 0.9998
+Validation F1       : 0.9969
+Test F1             : 0.9979
+Train ROC-AUC       : 1.0000
+Validation ROC-AUC  : 1.0000
+Test ROC-AUC        : 1.0000
+Overfitting Status  : No significant overfitting detected
+
+Validation Confusion Matrix:
+[[5077    5]
+ [  23 4551]]
+
+Classification Report (Validation Set):
+              precision    recall  f1-score   support
+
+ Not Churned       1.00      1.00      1.00      5082
+     Churned       1.00      0.99      1.00      4574
+
+    accuracy                           1.00      9656
+   macro avg       1.00      1.00      1.00      9656
+weighted avg       1.00      1.00      1.00      9656
+
 
 Test Confusion Matrix:
-[[6770    6]
- [  25 6074]]
+[[5080    3]
+ [  16 4558]]
 
 Classification Report (Test Set):
               precision    recall  f1-score   support
 
- Not Churned       1.00      1.00      1.00      6776
-     Churned       1.00      1.00      1.00      6099
+ Not Churned       1.00      1.00      1.00      5083
+     Churned       1.00      1.00      1.00      4574
 
-    accuracy                           1.00     12875
-   macro avg       1.00      1.00      1.00     12875
-weighted avg       1.00      1.00      1.00     12875
+    accuracy                           1.00      9657
+   macro avg       1.00      1.00      1.00      9657
+weighted avg       1.00      1.00      1.00      9657
+
 
 All outputs successfully saved to: C:\Users\Owner\BOOTCAMP_PROJECT_2\outputs\random_forest

@@ -1,7 +1,7 @@
 """
 Step 5 - Model Comparison & Evaluation
-Loads both models from their subfolders, compares them side-by-side, saves results to a .txt file,
-and saves comparison charts inside a dedicated 'model_comparison' subfolder.
+Loads Decision Tree and Random Forest models, computes evaluation metrics on 
+Validation and Test sets, saves comparison artifacts, and exports ROC/Confusion Matrix plots.
 """
 
 import os
@@ -13,7 +13,7 @@ matplotlib.use("Agg")
 
 import matplotlib.pyplot as plt
 import pandas as pd
-from config import DATA_CLEANED, OUTPUT_DIR, RANDOM_STATE, TARGET, TEST_SIZE
+from config import DATA_CLEANED, OUTPUT_DIR, RANDOM_STATE, TARGET
 from sklearn.metrics import (
     ConfusionMatrixDisplay,
     accuracy_score,
@@ -42,8 +42,12 @@ df = pd.read_csv(DATA_CLEANED)
 X = df.drop(columns=[TARGET])
 y = df[TARGET]
 
-X_train, X_test, y_train, y_test = train_test_split(
-    X, y, test_size=TEST_SIZE, random_state=RANDOM_STATE, stratify=y
+# 3-way split: 70% Train, 15% Validation, 15% Test
+X_train, X_temp, y_train, y_temp = train_test_split(
+    X, y, test_size=0.30, random_state=RANDOM_STATE, stratify=y
+)
+X_val, X_test, y_val, y_test = train_test_split(
+    X_temp, y_temp, test_size=0.50, random_state=RANDOM_STATE, stratify=y_temp
 )
 
 with open(DT_MODEL_PATH, "rb") as f:
@@ -54,33 +58,40 @@ with open(RF_MODEL_PATH, "rb") as f:
 
 models = {"Decision Tree": dt, "Random Forest": rf}
 
-# 3. Build comparison table
+# 3. Build side-by-side metric comparison table
 rows = []
 for name, model in models.items():
-    y_pred = model.predict(X_test)
-    y_prob = model.predict_proba(X_test)[:, 1]
-    cv = cross_val_score(model, X, y, cv=5, scoring="f1")
+    val_pred = model.predict(X_val)
+    val_prob = model.predict_proba(X_val)[:, 1]
+    test_pred = model.predict(X_test)
+    test_prob = model.predict_proba(X_test)[:, 1]
+    cv = cross_val_score(model, X_train, y_train, cv=5, scoring="f1")
+
     rows.append(
         {
             "Model": name,
-            "Accuracy": round(accuracy_score(y_test, y_pred), 4),
-            "Precision": round(precision_score(y_test, y_pred), 4),
-            "Recall": round(recall_score(y_test, y_pred), 4),
-            "F1 Score": round(f1_score(y_test, y_pred), 4),
-            "ROC-AUC": round(roc_auc_score(y_test, y_prob), 4),
-            "CV F1 (mean)": round(cv.mean(), 4),
-            "CV F1 (std)": round(cv.std(), 4),
+            "Val Acc": round(accuracy_score(y_val, val_pred), 4),
+            "Test Acc": round(accuracy_score(y_test, test_pred), 4),
+            "Val Prec": round(precision_score(y_val, val_pred), 4),
+            "Test Prec": round(precision_score(y_test, test_pred), 4),
+            "Val Rec": round(recall_score(y_val, val_pred), 4),
+            "Test Rec": round(recall_score(y_test, test_pred), 4),
+            "Val F1": round(f1_score(y_val, val_pred), 4),
+            "Test F1": round(f1_score(y_test, test_pred), 4),
+            "Val AUC": round(roc_auc_score(y_val, val_prob), 4),
+            "Test AUC": round(roc_auc_score(y_test, test_prob), 4),
+            "CV F1 (Mean)": round(cv.mean(), 4),
+            "CV F1 (Std)": round(cv.std(), 4),
         }
     )
 
 comparison = pd.DataFrame(rows)
 comparison_table_str = comparison.to_string(index=False)
 
-# Print comparison table to console
 print("\n===== MODEL COMPARISON =====")
 print(comparison_table_str)
 
-# 4. Save results to CSV and TXT files
+# 4. Save metrics to disk
 csv_file_path = os.path.join(COMP_OUTPUT_DIR, "model_comparison.csv")
 comparison.to_csv(csv_file_path, index=False)
 
@@ -91,34 +102,38 @@ with open(txt_file_path, "w", encoding="utf-8") as results_file:
     results_file.write(comparison_table_str + "\n\n")
     results_file.write(save_message + "\n")
 
-# 5. ROC Curve Comparison
-plt.figure(figsize=(8, 6))
-for name, model in models.items():
-    y_prob = model.predict_proba(X_test)[:, 1]
-    fpr, tpr, _ = roc_curve(y_test, y_prob)
-    auc = roc_auc_score(y_test, y_prob)
-    plt.plot(fpr, tpr, label=f"{name} (AUC={auc:.3f})")
+# 5. Plot ROC Curves
+fig, axes = plt.subplots(1, 2, figsize=(14, 6))
+for ax, (label, X_eval, y_eval) in zip(
+    axes, [("Validation Set", X_val, y_val), ("Test Set", X_test, y_test)]
+):
+    for name, model in models.items():
+        y_prob = model.predict_proba(X_eval)[:, 1]
+        fpr, tpr, _ = roc_curve(y_eval, y_prob)
+        auc = roc_auc_score(y_eval, y_prob)
+        ax.plot(fpr, tpr, label=f"{name} (AUC = {auc:.3f})")
+    ax.plot([0, 1], [0, 1], "k--", label="Random Chance")
+    ax.set_xlabel("False Positive Rate")
+    ax.set_ylabel("True Positive Rate")
+    ax.set_title(f"ROC Curve - {label}")
+    ax.legend(loc="lower right")
 
-plt.plot([0, 1], [0, 1], "k--", label="Random")
-plt.xlabel("False Positive Rate")
-plt.ylabel("True Positive Rate")
-plt.title("ROC Curve Comparison")
-plt.legend()
 plt.tight_layout()
-plt.savefig(
-    os.path.join(COMP_OUTPUT_DIR, "roc_curve_comparison.png"), dpi=150
-)
+plt.savefig(os.path.join(COMP_OUTPUT_DIR, "roc_curve_comparison.png"), dpi=150)
 plt.close()
 
-# 6. Confusion Matrices side-by-side
-fig, axes = plt.subplots(1, 2, figsize=(12, 5))
-for ax, (name, model) in zip(axes, models.items()):
-    y_pred = model.predict(X_test)
-    cm = confusion_matrix(y_test, y_pred)
-    ConfusionMatrixDisplay(cm, display_labels=["Not Churned", "Churned"]).plot(
-        ax=ax
-    )
-    ax.set_title(name)
+# 6. Plot Confusion Matrices
+fig, axes = plt.subplots(2, 2, figsize=(12, 10))
+for row, (label, X_eval, y_eval) in enumerate(
+    [("Validation", X_val, y_val), ("Test", X_test, y_test)]
+):
+    for col, (name, model) in enumerate(models.items()):
+        y_pred = model.predict(X_eval)
+        cm = confusion_matrix(y_eval, y_pred)
+        ConfusionMatrixDisplay(cm, display_labels=["Not Churned", "Churned"]).plot(
+            ax=axes[row, col], cmap="Blues", colorbar=False
+        )
+        axes[row, col].set_title(f"{label} Set - {name}")
 
 plt.tight_layout()
 plt.savefig(os.path.join(COMP_OUTPUT_DIR, "confusion_matrices.png"), dpi=150)

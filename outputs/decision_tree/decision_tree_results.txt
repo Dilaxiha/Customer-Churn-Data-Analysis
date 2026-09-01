@@ -1,26 +1,48 @@
-Train: (51499, 12), Test: (12875, 12)
+
+=== DATA SPLIT SUMMARY ===
+X_train shape : (45061, 12)
+X_val shape   : (9656, 12)
+X_test shape  : (9657, 12)
 
 ===== DECISION TREE RESULTS =====
-Train Accuracy : 0.9954
-Test Accuracy  : 0.9946
-Accuracy Gap   : 0.0007
-Train F1       : 0.9951
-Test F1        : 0.9943
-Train ROC-AUC  : 0.9999
-Test ROC-AUC   : 0.9999
-Overfitting    : No significant overfitting detected
+Train Accuracy      : 0.9953
+Validation Accuracy : 0.9940
+Test Accuracy       : 0.9953
+Train vs Val Gap    : 0.0013
+Train F1            : 0.9951
+Validation F1       : 0.9937
+Test F1             : 0.9951
+Train ROC-AUC       : 0.9999
+Validation ROC-AUC  : 0.9996
+Test ROC-AUC        : 0.9999
+Overfitting Status  : No significant overfitting detected
+
+Validation Confusion Matrix:
+[[5042   40]
+ [  18 4556]]
+
+Classification Report (Validation Set):
+              precision    recall  f1-score   support
+
+ Not Churned       1.00      0.99      0.99      5082
+     Churned       0.99      1.00      0.99      4574
+
+    accuracy                           0.99      9656
+   macro avg       0.99      0.99      0.99      9656
+weighted avg       0.99      0.99      0.99      9656
+
 
 Test Confusion Matrix:
-[[6737   39]
- [  30 6069]]
+[[5057   26]
+ [  19 4555]]
 
 Classification Report (Test Set):
               precision    recall  f1-score   support
 
- Not Churned       1.00      0.99      0.99      6776
-     Churned       0.99      1.00      0.99      6099
+ Not Churned       1.00      0.99      1.00      5083
+     Churned       0.99      1.00      1.00      4574
 
-    accuracy                           0.99     12875
-   macro avg       0.99      0.99      0.99     12875
-weighted avg       0.99      0.99      0.99     12875
+    accuracy                           1.00      9657
+   macro avg       1.00      1.00      1.00      9657
+weighted avg       1.00      1.00      1.00      9657
 
