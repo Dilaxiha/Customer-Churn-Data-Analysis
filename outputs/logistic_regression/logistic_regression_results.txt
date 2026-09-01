@@ -1,0 +1,50 @@
+
+=== DATA SPLIT SUMMARY ===
+X_train shape : (45061, 12)
+X_val shape   : (9656, 12)
+X_test shape  : (9657, 12)
+
+===== LOGISTIC REGRESSION RESULTS =====
+Train Accuracy      : 0.8260
+Validation Accuracy : 0.8236
+Test Accuracy       : 0.8315
+Train vs Val Gap    : 0.0024
+Train F1            : 0.8182
+Validation F1       : 0.8157
+Test F1             : 0.8231
+Train ROC-AUC       : 0.9044
+Validation ROC-AUC  : 0.9014
+Test ROC-AUC        : 0.9065
+Overfitting Status  : No significant overfitting detected
+
+Validation Confusion Matrix:
+[[4185  897]
+ [ 806 3768]]
+
+Classification Report (Validation Set):
+              precision    recall  f1-score   support
+
+ Not Churned       0.84      0.82      0.83      5082
+     Churned       0.81      0.82      0.82      4574
+
+    accuracy                           0.82      9656
+   macro avg       0.82      0.82      0.82      9656
+weighted avg       0.82      0.82      0.82      9656
+
+
+Test Confusion Matrix:
+[[4245  838]
+ [ 789 3785]]
+
+Classification Report (Test Set):
+              precision    recall  f1-score   support
+
+ Not Churned       0.84      0.84      0.84      5083
+     Churned       0.82      0.83      0.82      4574
+
+    accuracy                           0.83      9657
+   macro avg       0.83      0.83      0.83      9657
+weighted avg       0.83      0.83      0.83      9657
+
+
+All outputs successfully saved to: C:\Users\Owner\BOOTCAMP_PROJECT_2\outputs\logistic_regression

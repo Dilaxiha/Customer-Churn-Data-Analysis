@@ -1,0 +1,50 @@
+
+=== DATA SPLIT SUMMARY ===
+X_train shape : (45061, 12)
+X_val shape   : (9656, 12)
+X_test shape  : (9657, 12)
+
+===== XGBOOST RESULTS =====
+Train Accuracy      : 0.9999
+Validation Accuracy : 0.9995
+Test Accuracy       : 0.9996
+Train vs Val Gap    : 0.0004
+Train F1            : 0.9999
+Validation F1       : 0.9995
+Test F1             : 0.9996
+Train ROC-AUC       : 1.0000
+Validation ROC-AUC  : 1.0000
+Test ROC-AUC        : 1.0000
+Overfitting Status  : No significant overfitting detected
+
+Validation Confusion Matrix:
+[[5078    4]
+ [   1 4573]]
+
+Classification Report (Validation Set):
+              precision    recall  f1-score   support
+
+ Not Churned       1.00      1.00      1.00      5082
+     Churned       1.00      1.00      1.00      4574
+
+    accuracy                           1.00      9656
+   macro avg       1.00      1.00      1.00      9656
+weighted avg       1.00      1.00      1.00      9656
+
+
+Test Confusion Matrix:
+[[5080    3]
+ [   1 4573]]
+
+Classification Report (Test Set):
+              precision    recall  f1-score   support
+
+ Not Churned       1.00      1.00      1.00      5083
+     Churned       1.00      1.00      1.00      4574
+
+    accuracy                           1.00      9657
+   macro avg       1.00      1.00      1.00      9657
+weighted avg       1.00      1.00      1.00      9657
+
+
+All outputs successfully saved to: C:\Users\Owner\BOOTCAMP_PROJECT_2\outputs\xgboost

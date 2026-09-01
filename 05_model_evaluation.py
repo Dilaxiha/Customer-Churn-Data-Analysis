@@ -33,6 +33,12 @@ DT_MODEL_PATH = os.path.join(
 RF_MODEL_PATH = os.path.join(
     OUTPUT_DIR, "random_forest", "random_forest_model.pkl"
 )
+LR_MODEL_PATH = os.path.join(
+    OUTPUT_DIR, "logistic_regression", "logistic_regression_model.pkl"
+)
+XGB_MODEL_PATH = os.path.join(
+    OUTPUT_DIR, "xgboost", "xgboost_model.pkl"
+)
 
 COMP_OUTPUT_DIR = os.path.join(OUTPUT_DIR, "model_comparison")
 os.makedirs(COMP_OUTPUT_DIR, exist_ok=True)
@@ -56,16 +62,43 @@ with open(DT_MODEL_PATH, "rb") as f:
 with open(RF_MODEL_PATH, "rb") as f:
     rf = pickle.load(f)
 
-models = {"Decision Tree": dt, "Random Forest": rf}
+with open(LR_MODEL_PATH, "rb") as f:
+    lr = pickle.load(f)
+
+with open(XGB_MODEL_PATH, "rb") as f:
+    xgb = pickle.load(f)
+
+models = {
+    "Decision Tree": dt,
+    "Random Forest": rf,
+    "Logistic Regression": lr,
+    "XGBoost": xgb,
+}
+
+with open(os.path.join(OUTPUT_DIR, "logistic_regression", "scaler.pkl"), "rb") as scaler_file:
+    lr_scaler = pickle.load(scaler_file)
+
+X_train_scaled = lr_scaler.transform(X_train)
+X_val_scaled = lr_scaler.transform(X_val)
+X_test_scaled = lr_scaler.transform(X_test)
 
 # 3. Build side-by-side metric comparison table
 rows = []
 for name, model in models.items():
-    val_pred = model.predict(X_val)
-    val_prob = model.predict_proba(X_val)[:, 1]
-    test_pred = model.predict(X_test)
-    test_prob = model.predict_proba(X_test)[:, 1]
-    cv = cross_val_score(model, X_train, y_train, cv=5, scoring="f1")
+    if name == "Logistic Regression":
+        X_train_model = X_train_scaled
+        X_val_model = X_val_scaled
+        X_test_model = X_test_scaled
+    else:
+        X_train_model = X_train
+        X_val_model = X_val
+        X_test_model = X_test
+
+    val_pred = model.predict(X_val_model)
+    val_prob = model.predict_proba(X_val_model)[:, 1]
+    test_pred = model.predict(X_test_model)
+    test_prob = model.predict_proba(X_test_model)[:, 1]
+    cv = cross_val_score(model, X_train_model, y_train, cv=5, scoring="f1")
 
     rows.append(
         {
@@ -108,7 +141,12 @@ for ax, (label, X_eval, y_eval) in zip(
     axes, [("Validation Set", X_val, y_val), ("Test Set", X_test, y_test)]
 ):
     for name, model in models.items():
-        y_prob = model.predict_proba(X_eval)[:, 1]
+        if name == "Logistic Regression":
+            X_eval_model = lr_scaler.transform(X_eval)
+        else:
+            X_eval_model = X_eval
+
+        y_prob = model.predict_proba(X_eval_model)[:, 1]
         fpr, tpr, _ = roc_curve(y_eval, y_prob)
         auc = roc_auc_score(y_eval, y_prob)
         ax.plot(fpr, tpr, label=f"{name} (AUC = {auc:.3f})")
@@ -123,17 +161,22 @@ plt.savefig(os.path.join(COMP_OUTPUT_DIR, "roc_curve_comparison.png"), dpi=150)
 plt.close()
 
 # 6. Plot Confusion Matrices
-fig, axes = plt.subplots(2, 2, figsize=(12, 10))
+fig, axes = plt.subplots(2, 4, figsize=(18, 10))
 for row, (label, X_eval, y_eval) in enumerate(
     [("Validation", X_val, y_val), ("Test", X_test, y_test)]
 ):
     for col, (name, model) in enumerate(models.items()):
-        y_pred = model.predict(X_eval)
+        if name == "Logistic Regression":
+            X_eval_model = lr_scaler.transform(X_eval)
+        else:
+            X_eval_model = X_eval
+
+        y_pred = model.predict(X_eval_model)
         cm = confusion_matrix(y_eval, y_pred)
         ConfusionMatrixDisplay(cm, display_labels=["Not Churned", "Churned"]).plot(
             ax=axes[row, col], cmap="Blues", colorbar=False
         )
-        axes[row, col].set_title(f"{label} Set - {name}")
+        axes[row, col].set_title(f"{label} - {name}")
 
 plt.tight_layout()
 plt.savefig(os.path.join(COMP_OUTPUT_DIR, "confusion_matrices.png"), dpi=150)
